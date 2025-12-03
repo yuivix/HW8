@@ -1,6 +1,6 @@
 /******************************************************************
  *
- *   ADD YOUR NAME / SECTION NUMBER HERE
+ *   Ryan Avalos / COMP 272 002
  *
  *   This java file contains the problem solutions of canFinish and
  *   numGroups methods.
@@ -72,18 +72,52 @@ class ProblemSolutions {
      * @return boolean          - True if all exams can be taken, else false.
      */
 
-    public boolean canFinish(int numExams, 
-                             int[][] prerequisites) {
+    public boolean canFinish(int numExams, int[][] prerequisites) {
       
         int numNodes = numExams;  // # of nodes in graph
 
         // Build directed graph's adjacency list
         ArrayList<Integer>[] adj = getAdjList(numExams, 
                                         prerequisites); 
+        int[] checked = new int[numNodes];
 
+        // DFS method; Checks unchecked nodes
+        for (int i = 0; i < numNodes; i++) {
+            if (checked[i] == 0) {
+                Stack<Integer> stack = new Stack<>();
+                stack.push(i);
+
+                while (!stack.isEmpty()) {
+                    int node = stack.peek();
+
+                    // Checks it node is being visited
+                    if (checked[node] == 0) {
+                        checked[node] = 1; 
+                    } 
+                    
+                    // Got help from external source on few lines below.
+                    boolean uncheckedNeighbor = false; 
+                    // Prereq: Check all neighbors
+                    for (int neighbor : adj[node]) {
+                        if (checked[neighbor] == 0) {
+                            stack.push(neighbor);
+                            uncheckedNeighbor = true; 
+                            break; 
+                        } else if (checked[neighbor] == 1) {
+                            return false; 
+                        }
+                    }
+
+                    // No unchecked neighbors found
+                    if (!uncheckedNeighbor) {
+                        checked[node] = 2; 
+                        stack.pop();
+                    }
+                }
+            }
+        }
         // ADD YOUR CODE HERE - ADD YOUR NAME / SECTION AT TOP OF FILE
-        return false;
-
+        return true;
     }
 
 
@@ -190,9 +224,29 @@ class ProblemSolutions {
             }
         }
 
+        // Need to track nodes
+        boolean[] visited = new boolean[numNodes];
+        int count = 0;
+        for (int node = 0; node < numNodes; node++) {
+            if (!visited[node]) {
+                dfs(node, graph, visited);
+                count++;
+            }
+        }
+
         // YOUR CODE GOES HERE - you can add helper methods, you do not need
         // to put all code in this method.
-        return -1;
+        return count;
     }
 
+    // Method to check connected nodes
+    private void dfs(int node, Map<Integer, List<Integer>> graph, boolean[] visited) {
+        visited[node] = true;
+        List<Integer> neighbors = graph.getOrDefault(node, new ArrayList<>());
+        for (int neighbor : neighbors) {
+            if (!visited[neighbor]) {
+                dfs(neighbor, graph, visited);
+            }
+        }
+    }
 }

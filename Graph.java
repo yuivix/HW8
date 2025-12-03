@@ -1,6 +1,6 @@
 /******************************************************************
  *
- *   YOUR NAME / SECTION NUMBER
+ *   Ryan Avalos / COMP 272 002
  *
  *   Note, additional comments provided throughout this source code
  *   is for educational purposes
@@ -103,6 +103,30 @@ public class Graph {
    */
   
   public int findRoot() {
+    int[] edges = new int[numVertices];
+    int rootIndex = -1;
+
+    // Count edges for each
+    for (int src = 0; src < numVertices; src++) {
+      for (int dest : adjListArr[src]) {
+        edges[dest]++;               
+      }
+    }
+
+    for (int i = 0; i < numVertices; i++) {
+      // Checks for zero incoming edges
+      if (edges[i] == 0) {         
+        if (rootIndex == -1) {     
+          rootIndex = i;          
+        } else {                  
+          return -1;              
+        }
+      }
+    }
+
+    if (rootIndex != -1) {
+      return vertexValues.get(rootIndex);
+    }
 
     // ADD YOUR CODE HERE - DO NOT FORGET TO ADD YOUR NAME/SECTION AT TOP OF FILE
     return -1;
